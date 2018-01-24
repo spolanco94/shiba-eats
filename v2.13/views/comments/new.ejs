@@ -1,0 +1,18 @@
+<% include ../partials/header %>
+
+<div class="row">
+    <h1 style="text-align:center">Add a new comment to <%= dish.name %></h1>
+    <div style="width: 30%; margin: 30px auto;">
+        <form action="/dishes/<%= dish._id %>/comments" method="post">
+            <div class="form-group">
+                <input class="form-control" type="text" name="comment[text]" placeholder="Comment...">
+            </div>
+            <div class="form-group">
+                <button class="btn btn-primary btn-block">Submit!</button>
+            </div>
+        </form>
+        <a href="/dishes">Go back</a>
+    </div>
+</div>
+
+<% include ../partials/footer %>

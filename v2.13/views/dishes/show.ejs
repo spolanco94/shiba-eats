@@ -1,0 +1,89 @@
+<% include ../partials/header %>
+
+<div class="row">
+    <div class="col-md-3">
+        <p class="lead">ShibaEats</p>
+        <div class="list-group">
+            <list class="list-group-item active">Info 1</list>
+            <list class="list-group-item">Info 2</list>
+            <list class="list-group-item">Info 3</list>
+        </div>
+        <div id="map"></div>
+    </div>
+    <div class="col-md-9">
+        <div class="thumbnail">
+            <img class="img-responsive" src="<%= dish.image %>">
+            <div class="caption-full">
+                <h4 class="pull-right">$<%= dish.price %></h4>
+                <h4><a><%= dish.name %></a></h4>
+                <p><%= dish.description %></p>
+                <p>
+                    <em>Submitted By <%= dish.author.username %>, <%= moment(dish.createdAt).fromNow() %></em>
+                </p>
+                <% if(currentUser && dish.author.id.equals(currentUser._id) || currentUser && currentUser.isAdmin){ %>
+                    <a class="btn btn-warning" href="/dishes/<%= dish._id %>/edit">Edit</a>
+                    <form class="delete-form" action="/dishes/<%= dish._id %>?_method=DELETE" method="POST">
+                        <button class="btn btn-danger">Delete</button>
+                    </form>
+                <% } %>
+                
+            </div>
+        </div>
+        <div class="well">
+            <div class="text-right">
+                <a class="btn btn-success" href="/dishes/<%= dish._id %>/comments/new">Add New Comment</a>
+            </div>
+            <hr>
+            <% dish.comments.forEach(function(comment) { %>
+                <div class="row">
+                    <div class="col-md-12">
+                        <strong><%= comment.author.username %></strong>
+                        <span class="pull-right"><%= moment(comment.createdAt).fromNow() %></span>
+                        <p>
+                        <%= comment.text %> 
+                        </p>
+                        <% if(currentUser && comment.author.id.equals(currentUser._id) || currentUser && currentUser.isAdmin){ %>
+                            <a class="btn btn-xs btn-warning" href="/dishes/<%= dish._id %>/comments/<%= comment._id %>/edit">
+                                Edit
+                            </a>
+                            <form class="delete-form" action="/dishes/<%= dish._id %>/comments/<%= comment._id %>?_method=DELETE" method="POST">
+                                <input type="submit" class="btn btn-xs btn-danger" value="Delete">
+                            </form>
+                        <% } %>
+                    </div>
+                </div>
+            <% }) %>
+        </div>
+    </div>
+</div>
+
+<script>
+  function initMap() {
+    var lat = <%= dish.lat %>;
+    var lng = <%= dish.lng %>;
+    var center = {lat: lat, lng: lng };
+    var map = new google.maps.Map(document.getElementById('map'), {
+        zoom: 8,
+        center: center,
+        scrollwheel: false
+    });
+    var contentString = `
+      <strong><%= dish.name %><br />
+      <%= dish.location %></strong>
+      <p><%= dish.description %></p>
+    `
+    var infowindow = new google.maps.InfoWindow({
+      content: contentString
+    });
+    var marker = new google.maps.Marker({
+        position: center,
+        map: map
+    });
+    marker.addListener('click', function() {
+      infowindow.open(map, marker);
+    });
+  }
+</script>
+<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBXIkL6bPJRwx6qE48fA9Zq-1Z_LDEVTvI&callback=initMap"></script>
+
+<% include ../partials/footer %>
