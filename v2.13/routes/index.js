@@ -63,6 +63,38 @@ router.get("/logout", function(req, res){
     res.redirect("/");
 });
 
+//Edit profile route
+router.get("/users/:id/edit", function(req, res) {
+    User.findById(req.params.id, function(err, foundUser){
+        if(err) {
+            req.flash("error", "Error finding user, please try again.");
+            res.redirect("back");
+        } else {
+            res.render("users/edit", { user: foundUser });
+        }
+    });
+});
+
+//Update user profile route
+router.put("/users/:id", function(req, res){
+    var newData = {
+        firstName: req.body.firstName,
+        lastName: req.body.lastName,
+        email: req.body.email,
+        avatar: req.body.avatar,
+        bio: req.body.bio
+    };
+    User.findByIdAndUpdate(req.params.id, { $set: newData }, function(err, user){
+        if(err) {
+            req.flash("error", "There was an error updating your profile. Please try again.");
+            res.redirect("back");
+        } else {
+            req.flash("success", "Profile updated!");
+            res.redirect("/users/" + user._id);
+        }
+    });
+});
+
 //Forgot Password Route
 router.get("/forgot", function(req, res){
     res.send("forgot");
