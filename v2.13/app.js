@@ -14,7 +14,9 @@ var express         = require("express"),
 //Requiring routes
 var commentRoutes       = require("./routes/comments"),
     dishRoutes          = require("./routes/dishes"),
-    indexRoutes         = require("./routes/index");
+    indexRoutes         = require("./routes/index"),
+    passwordRoutes      = require("./routes/password"),
+    userRoutes          = require("./routes/user");
 
 //seedDB(); //seed the DB
 mongoose.connect("mongodb://localhost/shiba_eats", { useMongoClient: true });
@@ -47,6 +49,8 @@ app.use(function(req, res, next){
 app.use("/", indexRoutes);
 app.use("/dishes", dishRoutes);
 app.use("/dishes/:id/comments", commentRoutes);
+app.use("/", passwordRoutes);
+app.use("/users/:id", userRoutes);
 
 app.listen(process.env.PORT, process.env.IP, function() {
     console.log("ShibaEats Server Started");
