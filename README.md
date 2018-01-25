@@ -5,6 +5,6 @@ not limited to:
    - Working info tabs on show page
    - Add comment boxes on show page as opposed to directing to a new page
    - reCaptcha during signup
-   - Password reset
+   - ~~Password reset~~ **DONE**
    - Add more rows to comment boxes
    - Image upload
