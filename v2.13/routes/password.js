@@ -6,7 +6,7 @@ var nodemailer      = require("nodemailer");
 var crypto          = require("crypto");
 
 //Forgot Password Show Route
-router.get("/forgot-password", function(req, res){
+router.get("/forgot", function(req, res){
     res.render("forgot");
 });
 
@@ -121,7 +121,7 @@ router.post('/reset/:token', function(req, res) {
       });
     }
   ], function(err) {
-    res.redirect('/campgrounds');
+    res.redirect('/dishes');
   });
 });
 

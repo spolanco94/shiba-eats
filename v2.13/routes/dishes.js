@@ -3,48 +3,79 @@ var Dish            = require("../models/dish");
 var router          = express.Router();
 var middleware      = require("../middleware/");
 var geocoder        = require('geocoder');
+var multer = require('multer');
+var storage = multer.diskStorage({
+  filename: function(req, file, callback) {
+    callback(null, Date.now() + file.originalname);
+  }
+});
+
+var imageFilter = function (req, file, cb) {
+    // accept image files only
+    if (!file.originalname.match(/\.(jpg|jpeg|png|gif)$/i)) {
+        return cb(new Error('Only image files are allowed!'), false);
+    }
+    cb(null, true);
+};
+
+var upload = multer({ storage: storage, fileFilter: imageFilter})
+
+var cloudinary = require('cloudinary');
+cloudinary.config({ 
+  cloud_name: 'shibacodes', 
+  api_key: process.env.CLOUDINARY_API_KEY, 
+  api_secret: process.env.CLOUDINARY_API_SECRET
+});
 
 //Index - Show all Dishes
 router.get("/", function(req, res) {
-    //Get all dishes from db
-    Dish.find({}, function(err, allDishes) {
-        if (err) {
-            console.log(err);
-        }
-        else {
-            res.render("dishes/index", { dishes: allDishes, currentUser: req.user, page: "dishes" });
-        }
-    }); 
-
-});
-
-//Create - Add new Dishes to DB
-router.post("/", middleware.isLoggedIn, function(req, res) {
-    //Grab data from form to push to dishes array
-    var name = req.body.name;
-    var image = req.body.image;
-    var price = req.body.price;
-    var desc = req.body.description;
-    var author = {
-        id: req.user._id,
-        username: req.user.username
-    };
-    geocoder.geocode(req.body.location, function (err, data) {
-    var lat = data.results[0].geometry.location.lat;
-    var lng = data.results[0].geometry.location.lng;
-    var location = data.results[0].formatted_address;
-    
-    var newDish = { name: name, image: image, description: desc, author: author, location: location, lat: lat, lng: lng, price: price };
-    //Create a new dish and save to DB
-        Dish.create(newDish, function(err, newlyCreated) {
+    var noMatch = null;
+    if(req.query.search){
+        const regex = new RegExp(escapeRegex(req.query.search), "gi");
+        //Filter out titles of each dish
+        Dish.find({ name: regex }, function(err, allDishes) {
             if (err) {
                 console.log(err);
             }
             else {
-                //redirect back to dishes page
-                res.redirect("/dishes");
+                if(allDishes < 1){
+                    noMatch = "No campgrounds match that query, please try again.";
+                }
+                res.render("dishes/index", { dishes: allDishes, currentUser: req.user, page: "dishes", noMatch: noMatch });
             }
-        });
+        }); 
+    } else {
+        //Get all dishes from db
+        Dish.find({}, function(err, allDishes) {
+            if (err) {
+                console.log(err);
+            }
+            else {
+                res.render("dishes/index", { dishes: allDishes, currentUser: req.user, page: "dishes", noMatch: noMatch });
+            }
+        }); 
+        
+    }
+
+});
+
+//Create - Add new Dishes to DB
+router.post("/", middleware.isLoggedIn, upload.single('image'), function(req, res) {
+    cloudinary.uploader.upload(req.file.path, function(result) {
+      // add cloudinary url for the image to the campground object under image property
+      req.body.dish.image = result.secure_url;
+      // add author to campground
+      req.body.dish.author = {
+        id: req.user._id,
+        username: req.user.username
+      };
+      Dish.create(req.body.dish, function(err, dish) {
+        if (err) {
+          req.flash('error', err.message);
+          return res.redirect('back');
+        }
+        res.redirect('/dishes/' + dish.id);
+      });
     });
 });
 
@@ -82,20 +113,21 @@ router.get("/:id/edit", middleware.dishOwnership, function(req, res){
 
 //Update Dish Route
 router.put("/:id", middleware.dishOwnership, function(req, res){
-    geocoder.geocode(req.body.location, function (err, data) {
-    var lat = data.results[0].geometry.location.lat;
-    var lng = data.results[0].geometry.location.lng;
-    var location = data.results[0].formatted_address;
-    var newData = { name: req.body.name, image: req.body.image, description: req.body.description, cost: req.body.cost, location: location, lat: lat, lng: lng };
-    //find and update the correct dish
-        Dish.findByIdAndUpdate(req.params.id, req.body.dish, function(err, updatedDish){
-            if(err){
-                res.redirect("dishes");
-            } else {
-                //redirect somewhere
-                res.redirect("/dishes/" + req.params.id);
-            }
-        });
+    geocoder.geocode(req.file.path, function(result) {
+      // add cloudinary url for the image to the campground object under image property
+      req.body.dish.image = result.secure_url;
+      // add author to campground
+      req.body.dish.author = {
+        id: req.user._id,
+        username: req.user.username
+      };
+      Dish.create(req.body.dish, function(err, dish) {
+        if (err) {
+          req.flash('error', err.message);
+          return res.redirect('back');
+        }
+        res.redirect('/dishes/' + dish.id);
+      });
     });
 });
 
@@ -109,5 +141,9 @@ router.delete("/:id", middleware.dishOwnership, function(req, res){
         }
     });
 });
+
+function escapeRegex(text) {
+    return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
+}
 
 module.exports = router;
