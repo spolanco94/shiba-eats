@@ -1,5 +1,6 @@
 var express         = require("express"),
     app             = express(),
+    dotenv          = require('dotenv').config(),
     bodyParser      = require("body-parser"),
     mongoose        = require("mongoose"),
     flash           = require("connect-flash"),
