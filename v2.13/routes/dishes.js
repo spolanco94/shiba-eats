@@ -30,29 +30,54 @@ cloudinary.config({
 //Index - Show all Dishes
 router.get("/", function(req, res) {
     var noMatch = null;
+    var perPage = 8;
+    var pageQuery = parseInt(req.query.page);
+    var pageNumber = pageQuery ? pageQuery : 1;
     if(req.query.search){
         const regex = new RegExp(escapeRegex(req.query.search), "gi");
         //Filter out titles of each dish
-        Dish.find({ name: regex }, function(err, allDishes) {
-            if (err) {
-                console.log(err);
-            }
-            else {
-                if(allDishes < 1){
+        Dish.find({ name: regex }.skip((perPage * pageNumber) - perPage).limit(perPage).exec(function(err, allDishes) {
+            Dish.count({ name : regex }).exec(function(err, count){
+                if (err) {
+                    console.log(err);
+                    res.redirect("back");
+                } else {
+                if(allDishes.length < 1) {
                     noMatch = "No campgrounds match that query, please try again.";
                 }
-                res.render("dishes/index", { dishes: allDishes, currentUser: req.user, page: "dishes", noMatch: noMatch });
-            }
-        }); 
+                res.render("dishes/index", { 
+                    dishes: allDishes, 
+                    currentUser: req.user, 
+                    page: "dishes", 
+                    noMatch: noMatch, 
+                    search: req.query.search,
+                    current: pageNumber,
+                    pages: Math.ceil(count / perPage)
+                });
+                }
+                
+            });
+        })); 
     } else {
         //Get all dishes from db
-        Dish.find({}, function(err, allDishes) {
-            if (err) {
-                console.log(err);
-            }
-            else {
-                res.render("dishes/index", { dishes: allDishes, currentUser: req.user, page: "dishes", noMatch: noMatch });
-            }
+        Dish.find({}).skip((perPage * pageNumber) - perPage).limit(perPage).exec(function(err, allDishes) {
+            Dish.count().exec(function(err, count){
+                if (err) {
+                    console.log(err);
+                }
+                else {
+                    res.render("dishes/index", { 
+                        dishes: allDishes, 
+                        currentUser: req.user, 
+                        page: "dishes", 
+                        noMatch: noMatch, 
+                        current: pageNumber,
+                        pages: Math.ceil(count / perPage),
+                        search: false
+                    });
+                }
+                
+            })
         }); 
         
     }
