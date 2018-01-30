@@ -1,0 +1,35 @@
+<% include ../partials/header %>
+
+<div class="row">
+    <h1 style="text-align:center">Create a new dish</h1>
+    <div style="width: 30%; margin: 30px auto;">
+        <form action="/dishes" method="post" enctype="multipart/form-data">
+            <div class="form-group">
+                <input class="form-control" type="text" name="dish[name]" placeholder="name">
+            </div>
+            <div class="form-group">
+                <input class="form-control" type="number" name="dish[price]" placeholder="price" min="0.01" step="0.01">
+            </div>
+            <div class="form-group">
+                <label for="location">Location</label>
+                <input class="form-control" type="text" name="dish[location]" id="location" placeholder="Queens, NY">
+            </div>
+            <div class="form-group">
+                <label for="image">Image</label>
+                <input type="file" id="image" name="image" accept="image/*" required>
+            </div>
+            <div class="form-group">
+                <input class="form-control" type="text" name="dish[description]" placeholder="description">
+            </div>
+            <div class="form-group">
+                <button class="btn btn-primary btn-block">Submit!</button>
+            </div>
+        </form>
+        <script>
+            document.write('<a href="' + document.referrer + '">Go Back</a>');
+        </script>
+    </div>
+</div>
+
+
+<% include ../partials/footer %>

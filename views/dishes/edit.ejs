@@ -1,0 +1,33 @@
+<% include ../partials/header %>
+
+<div class="row">
+    <h1 style="text-align:center">Edit <%= dish.name %></h1>
+    <div style="width: 30%; margin: 25px auto;">
+        <form action="/dishes/<%= dish._id %>?_method=PUT" method="post">
+            <div class="form-group">
+                <input class="form-control" type="text" name="dish[name]" value="<%= dish.name %>">
+            </div>
+            <div class="form-group">
+                <input class="form-control" type="number" name="dish[price]" value="<%= dish.price %>" min="0.01" step="0.01">
+            </div>
+            <div class="form-group">
+                <label for="location">Location</label>
+                <input class="form-control" type="text" name="location" id="location" value="<%= dish.location %>">
+            </div>
+            <div class="form-group">
+                <input class="form-control" type="text" name="dish[image]" value="<%= dish.image %>">
+            </div>
+            <div class="form-group">
+                <input class="form-control" type="text" name="dish[description]" value="<%= dish.description %>">
+            </div>
+            <div class="form-group">
+                <button class="btn btn-primary btn-block">Submit!</button>
+            </div>
+        </form>
+        <script>
+            document.write('<a href="' + document.referrer + '">Go Back</a>');
+        </script>
+    </div>
+</div>
+
+<% include ../partials/footer %>

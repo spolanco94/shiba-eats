@@ -1,0 +1,40 @@
+body {
+    background-color: #666666;
+}
+
+.bubble {
+    background-color: #404040;
+    border-color: #262626;
+    border: 1px solid;
+    padding: 10px;
+}
+
+.jumbotron h1, p {
+    color: #d9d9d9;
+}
+
+.caption h4 {
+    color: #d9d9d9;
+}
+
+.thumbnail img {
+    width: 100%;
+}
+
+.thumbnail {
+    padding: 0;
+}
+
+.thumbnail .caption-full {
+    padding: 9px;
+}
+
+.delete-form {
+    display: inline;
+}
+
+/* Google Maps */
+#map {
+    height: 400px;
+    width: 100%;
+}

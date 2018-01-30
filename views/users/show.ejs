@@ -1,0 +1,39 @@
+<% include ../partials/header %>
+
+<div class="row">
+    <!--Display Name and Avatar/Profile photo-->
+    <div class="col-md-4">
+        <h1><%= user.firstName + " " + user.lastName %></h1>
+        <div class="thumbnail">
+            <img src="<%= user.avatar %>" alt="user profile image">
+            <div class="caption"><a href="mailto:<%= user.email %>"><%= user.email %></a></div>
+        </div>
+        <!--Biography display-->
+        <h5>Bio:</h5>
+        <p><%= user.bio %></p>
+        
+        <!--If current user is profile holder OR site admin then allow edit-->
+        <% if(currentUser && user._id.equals(currentUser._id) || currentUser && currentUser.isAdmin){ %>
+            <div class ="text-center">
+                 <a class ="btn btn-warning" href ="/users/<%= user._id %>/edit">Edit Profile </a>
+            </div>
+        <% } %>
+    </div>
+    <div class="col-md-8">
+        <!--Display postings made by user-->
+        <h3><%= user.username %>'s Dishes:</h3>
+        <ul>
+            <!--If there were no postings made-->
+            <% if(dishes.length < 1) {%>
+                <h5 class="mt-4 ml-2"><em>No dishes submitted yet...</em></h5>
+            <% } else { %>
+                <!--If there were postings found-->
+                <% dishes.forEach(function(dish){ %>
+                    <li><a href="/dishes/<%= dish.id %>"><%= dish.name %></a></li>
+                <% }); %>
+            <% } %>
+        </ul>
+    </div>
+</div>
+
+<% include ../partials/footer %>
