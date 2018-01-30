@@ -20,7 +20,7 @@ var commentRoutes       = require("./routes/comments"),
     userRoutes          = require("./routes/user");
 
 //seedDB(); //seed the DB
-mongoose.connect("mongodb://localhost/shiba_eats", { useMongoClient: true });
+mongoose.connect("mongodb://localhost/shiba_eats_v213");
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(__dirname + "/public"));
 app.use(methodOverride("_method"));
