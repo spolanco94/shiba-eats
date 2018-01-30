@@ -13,6 +13,11 @@ body {
   color: #fff;
 }
 
+.userAuth {
+  display: block;
+  padding-top: 10px;
+}
+
 .slideshow { 
   position: fixed;
   width: 100%;

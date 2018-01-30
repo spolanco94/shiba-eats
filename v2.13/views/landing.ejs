@@ -24,6 +24,15 @@
         <div id="landing-header">
      		<h1>Welcome to ShibaEats!</h1>
     		<a href="/dishes" class="btn btn-lg btn-success">View All Dishes</a>
+		    <div class="userAuth">
+    		    <% if(!currentUser){ %>
+    		        <a class="btn btn-sm btn-primary" href="/login">Login</a>
+                    <a class="btn btn-sm btn-primary" href="/register">Sign Up</a>
+                <% } else { %>
+                    <a class="btn btn-sm btn-warning" href="/users/<%= currentUser._id %>"><em>My Profile</em></a>
+                    <a class="btn btn-sm btn-danger" href="/logout"><em>Logout</em></a>
+                <% } %>
+		    </div>
     		<p>
                 <form action="/dishes" method="GET" class="form-inline">
                     <div class="form-group">
