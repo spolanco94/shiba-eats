@@ -5,6 +5,8 @@
         
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
         <link rel="stylesheet" href="/stylesheets/main.css">
+        
+        <script src='https://www.google.com/recaptcha/api.js'></script>
 
     </head>
     
@@ -24,6 +26,7 @@
         <div id="navbar" class="collapse navbar-collapse">
           <ul class="nav navbar-nav">
             <li class="<%= typeof page !== 'undefined' && page === 'dishes' ? 'active' : '' %>"><a href="/dishes">Home</a></li>
+            <li class="<%= typeof page !== 'undefined' && page === 'contact' ? 'active' : '' %>"><a href="/contact">Contact</a></li>
           </ul>
           <ul class="nav navbar-nav navbar-right">
               <% if(!currentUser){ %>

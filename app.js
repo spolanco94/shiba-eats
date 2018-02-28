@@ -17,12 +17,12 @@ var commentRoutes       = require("./routes/comments"),
     dishRoutes          = require("./routes/dishes"),
     indexRoutes         = require("./routes/index"),
     passwordRoutes      = require("./routes/password"),
-    userRoutes          = require("./routes/user");
+    userRoutes          = require("./routes/user"),
+    contactRoutes       = require("./routes/contact");
 
-//seedDB(); //seed the DB
-mongoose.connect(process.env.DATABASEURL);
-// mongoose.connect("mongodb://steve:hewie@ds119688.mlab.com:19688/shibaeats");
-
+//seedDB(); //seed t                 he DB
+var url = process.env.DATABASEURL || "mongodb://localhost/shiba_eats_v213"
+mongoose.connect(url);
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(__dirname + "/public"));
 app.use(methodOverride("_method"));
@@ -54,6 +54,7 @@ app.use("/dishes", dishRoutes);
 app.use("/dishes/:id/comments", commentRoutes);
 app.use("/", passwordRoutes);
 app.use("/users/:id", userRoutes);
+app.use("/contact", contactRoutes);
 
 app.listen(process.env.PORT, process.env.IP, function() {
     console.log("ShibaEats Server Started");
